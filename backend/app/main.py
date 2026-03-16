@@ -1,13 +1,15 @@
+import logging
+import time
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.exc import OperationalError
 
 from app.api import auth, broker, notifications, opportunities, theses, watchlist
-from app.db.base import Base, SessionLocal, engine
+from app.db.base import Base, engine
 from app.models import entities  # noqa: F401
-from app.models.entities import BrokerInstrument, Event
-from app.services.ai import generate_report_for_event
-from app.services.news import ingest_news
 
+logger = logging.getLogger(__name__)
 
 app = FastAPI(title="AI Investment Opportunity MVP")
 
@@ -22,14 +24,15 @@ app.add_middleware(
 
 @app.on_event("startup")
 def startup() -> None:
-    Base.metadata.create_all(bind=engine)
-    db = SessionLocal()
-    try:
-        ingest_news(db)
-        for event in db.query(Event).order_by(Event.created_at.desc()).limit(20).all():
-            generate_report_for_event(db, event)
-    finally:
-        db.close()
+    for attempt in range(1, 11):
+        try:
+            Base.metadata.create_all(bind=engine)
+            return
+        except OperationalError:
+            if attempt == 10:
+                raise
+            logger.warning("Database not ready (attempt %d/10), retrying in 3s...", attempt)
+            time.sleep(3)
 
 
 app.include_router(auth.router, prefix="/api")
