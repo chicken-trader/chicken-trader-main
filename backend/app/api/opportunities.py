@@ -45,7 +45,8 @@ def opportunity_detail(
     report = generate_report_for_event(db, event)
     setting = db.query(UserBrokerSetting).filter(UserBrokerSetting.user_id == current_user.id).first()
     broker_name = setting.broker_name if setting else "Default"
-    assets = filter_assets_for_broker(db, report.id, broker_name)
+    preferred_exchanges = setting.preferred_exchanges if setting else ""
+    assets = filter_assets_for_broker(db, report.id, broker_name, preferred_exchanges)
     assets_warning = "No assets could be determined for this opportunity at the moment." if not assets else None
     return OpportunityDetail(
         event_id=event.id,

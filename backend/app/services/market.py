@@ -1,6 +1,10 @@
+import logging
+
 import httpx
 
 from app.core.config import settings
+
+logger = logging.getLogger(__name__)
 
 
 def validate_ticker(ticker: str) -> bool:
@@ -23,3 +27,35 @@ def validate_ticker(ticker: str) -> bool:
         return bool(data.get("ticker")) or (symbol.isalpha() and 1 <= len(symbol) <= 5)
     except Exception:
         return symbol.isalpha() and 1 <= len(symbol) <= 5
+
+
+def get_price_snapshot(tickers: list[str]) -> dict[str, float]:
+    """Fetch current prices for a list of tickers from Finnhub.
+
+    Returns a dict mapping ticker -> last price. Skips tickers that fail.
+    Returns an empty dict when market_api_key is not configured.
+    """
+    if not tickers or not settings.market_api_key:
+        return {}
+
+    prices: dict[str, float] = {}
+    with httpx.Client(timeout=10) as client:
+        for ticker in tickers[:15]:  # cap to avoid rate-limit bursts
+            symbol = ticker.strip().upper()
+            if not symbol:
+                continue
+            try:
+                resp = client.get(
+                    f"{settings.market_api_base_url}/quote",
+                    params={"symbol": symbol, "token": settings.market_api_key},
+                )
+                if resp.status_code == 200:
+                    data = resp.json()
+                    current_price = data.get("c")  # "c" = current price in Finnhub
+                    if current_price:
+                        prices[symbol] = float(current_price)
+            except Exception as exc:
+                logger.debug("Price fetch failed for %s: %s", symbol, exc)
+                continue
+
+    return prices
