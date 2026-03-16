@@ -5,6 +5,7 @@ export const useNotificationsStore = defineStore("notifications", {
   state: () => ({
     items: [] as any[],
     error: "",
+    loading: false,
   }),
   getters: {
     unreadCount: (state) => state.items.filter((n) => !n.read).length,
@@ -12,8 +13,10 @@ export const useNotificationsStore = defineStore("notifications", {
   actions: {
     async load() {
       this.error = "";
+      this.loading = true;
       try { this.items = await api("/notifications"); }
       catch (e: any) { this.error = e.message; }
+      finally { this.loading = false; }
     },
     async markRead(id: number) {
       try {

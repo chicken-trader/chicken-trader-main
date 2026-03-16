@@ -5,8 +5,7 @@ from typing import Optional
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
-from app.models.entities import BrokerInstrument, Event, InvestmentReport, ReportAsset
-from app.services.market import validate_ticker
+from app.models.entities import Event, InvestmentReport, ReportAsset
 
 logger = logging.getLogger(__name__)
 
@@ -128,34 +127,3 @@ def generate_report_for_event(db: Session, event: Event) -> InvestmentReport:
     db.commit()
     db.refresh(report)
     return report
-
-
-def filter_assets_for_broker(
-    db: Session,
-    report_id: int,
-    broker_name: str,
-    preferred_exchanges: str = "",
-) -> list[ReportAsset]:
-    assets = db.query(ReportAsset).filter(ReportAsset.report_id == report_id).all()
-    allowed = db.query(BrokerInstrument).filter(
-        BrokerInstrument.broker_name == broker_name,
-        BrokerInstrument.active.is_(True),
-    ).all()
-
-    if not allowed:
-        return [asset for asset in assets if validate_ticker(asset.ticker)]
-
-    # Build preferred exchange set for priority filtering (REQ-BRK-003)
-    preferred_set: set[str] = set()
-    if preferred_exchanges:
-        preferred_set = {e.strip().upper() for e in preferred_exchanges.split(",") if e.strip()}
-
-    if preferred_set:
-        preferred_tickers = {row.ticker.upper() for row in allowed if row.exchange.upper() in preferred_set}
-        # Use preferred-exchange tickers if any match; otherwise fall back to all allowed
-        allowed_tickers = preferred_tickers if preferred_tickers else {row.ticker.upper() for row in allowed}
-    else:
-        allowed_tickers = {row.ticker.upper() for row in allowed}
-
-    filtered = [asset for asset in assets if asset.ticker.upper() in allowed_tickers]
-    return [asset for asset in filtered if validate_ticker(asset.ticker)]

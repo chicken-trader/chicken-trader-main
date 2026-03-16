@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
@@ -27,6 +27,7 @@ def list_followed_theses(current_user: User = Depends(get_current_user), db: Ses
                 id=row.id,
                 event_id=row.event_id,
                 thesis_summary=row.thesis_summary,
+                report_headline=row.report_headline,
                 time_horizon=row.time_horizon,
                 followed_at=row.followed_at,
                 closed=row.closed,
@@ -35,6 +36,19 @@ def list_followed_theses(current_user: User = Depends(get_current_user), db: Ses
             )
         )
     return output
+
+
+@router.delete("/{thesis_id}", status_code=204)
+def unfollow_thesis(
+    thesis_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> None:
+    thesis = db.get(FollowedThesis, thesis_id)
+    if not thesis or thesis.user_id != current_user.id:
+        raise HTTPException(status_code=404, detail="Thesis not found")
+    db.delete(thesis)
+    db.commit()
 
 
 @router.post("/reevaluate")

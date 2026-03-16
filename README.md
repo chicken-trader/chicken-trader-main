@@ -18,7 +18,6 @@ This repository contains an MVP implementation of a news-driven investment oppor
 - Terminal Sell behavior: single notification + close thesis + stop reprocessing
 - In-app notifications center
 - Watchlist management
-- Broker settings and broker-aware asset filtering
 - News ingestion worker and AI report generation pipeline with ticker validation retry
 
 ## Architecture
@@ -95,7 +94,6 @@ docker stack deploy -c docker-compose.network.yml -c docker-compose.app.yml -c d
 - `GET /api/notifications`
 - `POST /api/notifications/{id}/read`
 - `GET|POST|DELETE /api/watchlist`
-- `GET|PUT /api/broker/settings`
 
 ## Background jobs
 

@@ -6,17 +6,23 @@ export const useOpportunitiesStore = defineStore("opportunities", {
     items: [] as any[],
     selected: null as any,
     error: "",
+    loading: false,
   }),
   actions: {
     async loadDaily() {
       this.error = "";
+      this.loading = true;
       try { this.items = await api("/opportunities"); }
       catch (e: any) { this.error = e.message; }
+      finally { this.loading = false; }
     },
     async loadDetail(id: string) {
       this.error = "";
+      this.loading = true;
+      this.selected = null;
       try { this.selected = await api(`/opportunities/${id}`); }
       catch (e: any) { this.error = e.message; }
+      finally { this.loading = false; }
     },
     async follow(id: string) {
       await api(`/opportunities/${id}/follow`, { method: "POST", body: JSON.stringify({ time_horizon: "event-driven" }) });

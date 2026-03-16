@@ -16,18 +16,16 @@
    - 4.1 [News Ingestion](#41-news-ingestion)
    - 4.2 [AI-Based Opportunity Detection](#42-ai-based-opportunity-detection)
    - 4.3 [AI-Generated Investment Reports](#43-ai-generated-investment-reports)
-   - 4.4 [Broker-Aware Security Selection](#44-broker-aware-security-selection)
-   - 4.5 [Following an Investment Thesis](#45-following-an-investment-thesis)
-   - 4.6 [Thesis Monitoring System](#46-thesis-monitoring-system)
-   - 4.7 [AI Thesis Reevaluation](#47-ai-thesis-reevaluation)
-   - 4.8 [User Notifications](#48-user-notifications)
+   - 4.4 [Following an Investment Thesis](#44-following-an-investment-thesis)
+   - 4.5 [Thesis Monitoring System](#45-thesis-monitoring-system)
+   - 4.6 [AI Thesis Reevaluation](#46-ai-thesis-reevaluation)
+   - 4.7 [User Notifications](#47-user-notifications)
 5. [User Interface Requirements](#5-user-interface-requirements)
    - 5.1 [Daily Opportunities Dashboard](#51-daily-opportunities-dashboard)
    - 5.2 [Opportunity Detail Page](#52-opportunity-detail-page)
    - 5.3 [Followed Ideas Dashboard](#53-followed-ideas-dashboard)
    - 5.4 [Notifications Centre](#54-notifications-centre)
    - 5.5 [Watchlist](#55-watchlist)
-   - 5.6 [Broker Settings](#56-broker-settings)
 6. [System Architecture](#6-system-architecture)
    - 6.1 [Frontend](#61-frontend)
    - 6.2 [Backend](#62-backend)
@@ -69,7 +67,6 @@ The system encompasses:
 | Opportunity | A news event identified by the system as having investment relevance. |
 | Follow | A user action that activates thesis tracking for a specific opportunity. |
 | Reevaluation | A periodic AI process that reassesses whether a thesis remains valid. |
-| Broker-aware | Filtering of recommended instruments to only those tradable through a user's configured broker. |
 | SPA | Single-Page Application. |
 | ETF | Exchange-Traded Fund. |
 
@@ -99,7 +96,7 @@ News APIs → Ingestion → Deduplication & Clustering → AI Relevance Filter
 
 | Role | Description |
 |---|---|
-| Authenticated User | A registered user who can read reports, follow theses, configure a broker, and receive notifications. |
+| Authenticated User | A registered user who can read reports, follow theses, and receive notifications. |
 | Guest | An unauthenticated visitor. Access is limited to a preview of the dashboard; following ideas requires authentication. |
 | System (AI Agent) | The automated backend process responsible for ingestion, report generation, monitoring, and reevaluation. |
 | Administrator | Internal operator with access to system configuration, ingestion pipeline controls, and AI prompt management. |
@@ -129,6 +126,8 @@ News APIs → Ingestion → Deduplication & Clustering → AI Relevance Filter
 **REQ-ING-005** Each event cluster shall be assigned a market relevance rank by the AI model prior to report generation.
 
 **REQ-ING-006** Raw ingested articles shall be stored with a reference to their source URL, publication timestamp, and source provider name to ensure traceability.
+
+**REQ-ING-007** The news ingestion pipeline shall fetch articles from the following NewsAPI categories: `business`, `general`, and `technology`.
 
 ---
 
@@ -183,21 +182,7 @@ News APIs → Ingestion → Deduplication & Clustering → AI Relevance Filter
 
 ---
 
-### 4.4 Broker-Aware Security Selection
-
-**REQ-BRK-001** The system shall support a configurable instrument catalogue per supported broker.
-
-**REQ-BRK-002** When a user has configured a preferred broker, the AI report generation pipeline shall filter suggested securities to only include instruments available on that broker's platform.
-
-**REQ-BRK-003** Where a security is listed on multiple exchanges, the system shall prioritise the exchange listing preferred by the user's configured broker.
-
-**REQ-BRK-004** The instrument catalogue shall be updateable by an administrator without requiring a code deployment.
-
-**REQ-BRK-005** If direct API integration with a broker is unavailable, the system shall fall back to a statically maintained instrument catalogue for that broker.
-
----
-
-### 4.5 Following an Investment Thesis
+### 4.4 Following an Investment Thesis
 
 **REQ-FOL-001** An authenticated user shall be able to follow any active investment opportunity from its detail page.
 
@@ -217,9 +202,15 @@ News APIs → Ingestion → Deduplication & Clustering → AI Relevance Filter
 
 **REQ-FOL-004** A user shall be able to manually mark a followed thesis as closed at any time.
 
+**REQ-FOL-005** A user shall be able to unfollow an investment idea at any time. Unfollowing shall permanently remove the thesis tracking record from the user's followed ideas list.
+
+**REQ-FOL-006** The thesis tracking record shall store the headline of the original investment report, captured at follow time, as the canonical display name for the followed idea.
+
+**REQ-FOL-007** The thesis tracking record shall maintain a persistent reference to the original investment report, ensuring it remains accessible to the user regardless of whether the opportunity is still listed on the dashboard.
+
 ---
 
-### 4.6 Thesis Monitoring System
+### 4.5 Thesis Monitoring System
 
 **REQ-MON-001** The backend shall operate a continuous monitoring loop for all thesis records with status Active or Warning.
 
@@ -241,7 +232,7 @@ News APIs → Ingestion → Deduplication & Clustering → AI Relevance Filter
 
 ---
 
-### 4.7 AI Thesis Reevaluation
+### 4.6 AI Thesis Reevaluation
 
 **REQ-REV-001** The AI reevaluation process shall be triggered automatically after each monitoring cycle for each active thesis.
 
@@ -261,7 +252,7 @@ News APIs → Ingestion → Deduplication & Clustering → AI Relevance Filter
 
 ---
 
-### 4.8 User Notifications
+### 4.7 User Notifications
 
 **REQ-NOT-001** The system shall generate a notification whenever a thesis status changes to Warning or Close Suggested.
 
@@ -343,6 +334,12 @@ The frontend shall be a single-page application built with Vue.js and Vite. All 
 
 **REQ-UI-FOL-004** Users shall be able to manually close a thesis from this view.
 
+**REQ-UI-FOL-005** Users shall be able to unfollow an investment idea from the Followed Ideas Dashboard. An unfollow action shall prompt the user for confirmation before removing the record.
+
+**REQ-UI-FOL-006** Each followed idea shall be identified in the Followed Ideas Dashboard by the headline of the original investment report, as captured at follow time (see REQ-FOL-006).
+
+**REQ-UI-FOL-007** Users shall be able to navigate to the full original investment report from each followed idea entry in the Followed Ideas Dashboard.
+
 ---
 
 ### 5.4 Notifications Centre
@@ -366,20 +363,6 @@ The frontend shall be a single-page application built with Vue.js and Vite. All 
 **REQ-UI-WL-002** The watchlist view shall display each bookmarked security with its ticker, name, and asset type.
 
 **REQ-UI-WL-003** Users shall be able to add and remove securities from the watchlist from the opportunity detail page or directly from the watchlist view.
-
----
-
-### 5.6 Broker Settings
-
-**REQ-UI-BRK-001** Users shall be able to configure their preferred broker from a settings view.
-
-**REQ-UI-BRK-002** The settings view shall allow users to specify:
-
-- Preferred broker (selection from a supported list)
-- Preferred exchanges
-- Instrument availability preferences
-
-**REQ-UI-BRK-003** Broker settings shall take effect on the next report viewed or generated after the settings are saved.
 
 ---
 
@@ -476,7 +459,6 @@ The following external integrations are required or recommended:
 |---|---|---|
 | News APIs | Article ingestion | REST API (e.g., NewsAPI, Bloomberg, Refinitiv) |
 | Market data APIs | Price monitoring for thesis tracking | REST API (e.g., Yahoo Finance, Polygon.io, Alpha Vantage) |
-| Broker instrument catalogues | Security filtering by broker | Static catalogue or broker API |
 | Sector classification data | Tagging events and securities by sector | Reference dataset (e.g., GICS) |
 
 ---
@@ -487,8 +469,7 @@ The following external integrations are required or recommended:
 
 | Entity | Key Attributes |
 |---|---|
-| `User` | id, email, password_hash, broker_id, notification_preferences, created_at |
-| `Broker` | id, name, supported_exchanges, instrument_catalogue |
+| `User` | id, email, password_hash, notification_preferences, created_at |
 | `NewsArticle` | id, source_url, headline, body, published_at, source_provider, event_cluster_id |
 | `EventCluster` | id, articles[], relevance_rank, created_at |
 | `InvestmentReport` | id, event_cluster_id, headline, fields (see REQ-RPT-002), created_at |
@@ -541,7 +522,7 @@ Defined in Section 6.3.
 
 ### 8.6 Maintainability
 
-**REQ-NFR-MAINT-001** The system shall use a modular architecture that allows the AI provider, news source integrations, and broker catalogues to be updated or replaced independently.
+**REQ-NFR-MAINT-001** The system shall use a modular architecture that allows the AI provider and news source integrations to be updated or replaced independently.
 
 **REQ-NFR-MAINT-002** AI prompts shall be stored in a configurable location (e.g., a database table or dedicated configuration file) to allow updates without a code deployment.
 
@@ -584,6 +565,7 @@ The following items are explicitly excluded from version 1.0:
 | AI Confidence Indicator | A qualitative or numeric rating produced by the AI indicating its confidence in a given investment thesis. |
 | Event Cluster | A group of news articles determined by the system to relate to the same underlying market event. |
 | Follow | A user action that registers a thesis for ongoing monitoring and notification. |
+| Unfollow | A user action that permanently removes a thesis tracking record from the user's followed ideas list. |
 | Opportunity | A news-driven market event for which the system has generated an investment report. |
 | Reevaluation | The process by which the AI reassesses whether an active thesis remains valid, triggered periodically by the monitoring loop. |
 | Thesis | The structured AI investment argument associated with a specific event, including suggested securities, conditions, and risk factors. |

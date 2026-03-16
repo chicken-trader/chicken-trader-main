@@ -4,7 +4,6 @@ import OpportunityDetailView from "../views/OpportunityDetailView.vue";
 import FollowedIdeasView from "../views/FollowedIdeasView.vue";
 import NotificationsView from "../views/NotificationsView.vue";
 import WatchlistView from "../views/WatchlistView.vue";
-import BrokerSettingsView from "../views/BrokerSettingsView.vue";
 import LoginView from "../views/LoginView.vue";
 import RegisterView from "../views/RegisterView.vue";
 
@@ -16,7 +15,6 @@ const router = createRouter({
     { path: "/followed", component: FollowedIdeasView },
     { path: "/notifications", component: NotificationsView },
     { path: "/watchlist", component: WatchlistView },
-    { path: "/broker", component: BrokerSettingsView },
     { path: "/login", component: LoginView },
     { path: "/register", component: RegisterView },
     { path: "/:pathMatch(.*)*", redirect: "/" },

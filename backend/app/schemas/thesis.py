@@ -6,6 +6,7 @@ class ThesisOut(BaseModel):
     id: int
     event_id: int
     thesis_summary: str
+    report_headline: str
     time_horizon: str
     followed_at: datetime
     closed: bool

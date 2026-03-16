@@ -79,23 +79,6 @@ class ReportAsset(Base):
     justification: Mapped[str] = mapped_column(Text, default="")
 
 
-class BrokerInstrument(Base):
-    __tablename__ = "broker_instruments"
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    broker_name: Mapped[str] = mapped_column(String(120), index=True)
-    ticker: Mapped[str] = mapped_column(String(20), index=True)
-    exchange: Mapped[str] = mapped_column(String(20), default="")
-    active: Mapped[bool] = mapped_column(Boolean, default=True)
-    __table_args__ = (UniqueConstraint("broker_name", "ticker", name="uq_broker_ticker"),)
-
-
-class UserBrokerSetting(Base):
-    __tablename__ = "user_broker_settings"
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), unique=True, index=True)
-    broker_name: Mapped[str] = mapped_column(String(120), default="Default")
-    preferred_exchanges: Mapped[str] = mapped_column(String(255), default="")
-
 
 class FollowedThesis(Base):
     __tablename__ = "followed_theses"
@@ -105,6 +88,7 @@ class FollowedThesis(Base):
     report_id: Mapped[int] = mapped_column(ForeignKey("investment_reports.id", ondelete="CASCADE"), index=True)
     securities_json: Mapped[str] = mapped_column(Text)
     thesis_summary: Mapped[str] = mapped_column(Text)
+    report_headline: Mapped[str] = mapped_column(Text, default="")
     time_horizon: Mapped[str] = mapped_column(String(50), default="event-driven")
     thesis_conditions: Mapped[str] = mapped_column(Text, default="")
     followed_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)

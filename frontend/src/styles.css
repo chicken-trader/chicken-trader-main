@@ -1,102 +1,598 @@
 @import "tailwindcss";
 
+/* =============================================
+   MARIO UI KIT — DESIGN TOKENS
+   ============================================= */
+:root {
+  --mario-red: #e52521;
+  --mario-red-dark: #b01c18;
+  --mario-yellow: #fbd000;
+  --mario-yellow-dark: #d4a017;
+  --mario-blue: #049cd8;
+  --mario-blue-dark: #0378a6;
+  --mario-green: #43b047;
+  --mario-green-dark: #2e7a31;
+  --mario-brown: #8b4513;
+  --mario-brown-light: #a0522d;
+  --mario-black: #1a1a1a;
+  --mario-panel: #2b2b2b;
+  --mario-panel-mid: #3a3a3a;
+  --mario-white: #ffffff;
+  --mario-white-dim: #e8e8e8;
+  --mario-warning: #ff8c00;
+
+  --pixel-shadow: 4px 4px 0px #000000;
+  --pixel-border: 3px solid #000000;
+
+  --font-heading: "Press Start 2P", monospace;
+  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* =============================================
+   BASE STYLES
+   ============================================= */
 @layer base {
   body {
-    @apply m-0 text-stone-100;
-    background-color: #43403e;
-    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+    background-color: var(--mario-black);
+    color: var(--mario-white);
+    font-family: var(--font-body);
+    margin: 0;
+    /* space for fixed bottom nav */
+    padding-bottom: 80px;
   }
 
-  h1,
-  h2,
-  h3,
-  h4 {
-    font-family: "Georgia", "Times New Roman", ui-serif, serif;
-    @apply text-stone-100;
+  h1 {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--mario-white);
+    margin: 0 0 1rem;
   }
 
   h2 {
-    @apply mb-4 border-b border-stone-600 pb-2 text-2xl font-semibold tracking-tight;
+    font-family: var(--font-heading);
+    font-size: 0.875rem;
+    line-height: 1.8;
+    color: var(--mario-white);
+    margin: 0 0 1.25rem;
   }
 
   h3 {
-    @apply mb-2 text-xl font-semibold;
+    font-family: var(--font-heading);
+    font-size: 0.65rem;
+    line-height: 1.8;
+    color: var(--mario-white);
+    margin: 0 0 0.75rem;
+  }
+
+  h4 {
+    font-family: var(--font-heading);
+    font-size: 0.55rem;
+    line-height: 1.8;
+    color: var(--mario-white-dim);
+    margin: 0 0 0.5rem;
   }
 
   p {
-    @apply leading-relaxed text-stone-300;
-  }
-}
-
-@layer components {
-  .layout {
-    @apply min-h-screen;
-  }
-
-  .header {
-    @apply border-b border-stone-600 bg-[#3a3735] px-6 py-4 text-stone-100;
-  }
-
-  .header nav {
-    @apply mt-3 flex flex-wrap gap-4;
-  }
-
-  .header a {
-    @apply text-xs font-semibold uppercase tracking-[0.12em] text-stone-300 no-underline transition-colors;
-  }
-
-  .header a:hover {
-    @apply text-stone-100;
-  }
-
-  .content {
-    @apply mx-auto max-w-6xl px-6 py-8;
-  }
-
-  .card {
-    @apply mb-4 rounded-md border border-stone-600 bg-[#4a4643] p-5 shadow-[0_1px_0_rgba(0,0,0,0.2)];
-  }
-
-  .grid {
-    @apply grid gap-4;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  }
-
-  .badge {
-    @apply inline-block rounded-sm border border-stone-500 bg-[#3d3a37] px-2 py-0.5 text-[11px] font-medium uppercase tracking-wide text-stone-300;
-  }
-
-  .trend-up {
-    @apply text-emerald-400;
-  }
-
-  .trend-down {
-    @apply text-rose-400;
-  }
-
-  button {
-    @apply cursor-pointer rounded-sm border border-amber-400 bg-amber-400 px-3 py-2 text-sm font-semibold text-stone-900 transition-colors;
-  }
-
-  button:hover {
-    @apply bg-amber-300;
-  }
-
-  input,
-  select,
-  textarea {
-    @apply my-1.5 mb-2.5 box-border w-full rounded-sm border border-stone-500 bg-[#3f3b39] px-2.5 py-2 text-stone-100;
+    color: var(--mario-white-dim);
+    line-height: 1.7;
+    margin: 0 0 0.75rem;
   }
 
   a {
-    @apply text-amber-300 underline decoration-amber-300/40 underline-offset-2;
+    color: var(--mario-yellow);
+    text-decoration: underline;
+  }
+
+  a:hover {
+    color: var(--mario-yellow-dark);
   }
 
   ul {
-    @apply m-0 list-disc pl-5;
+    margin: 0 0 0.75rem;
+    padding-left: 1.25rem;
   }
 
   li {
-    @apply mb-1;
+    margin-bottom: 0.25rem;
+    color: var(--mario-white-dim);
+  }
+}
+
+/* =============================================
+   COMPONENT CLASSES
+   ============================================= */
+@layer components {
+
+  /* === LAYOUT === */
+  .layout {
+    min-height: 100vh;
+  }
+
+  /* === HEADER === */
+  .mario-header {
+    background-color: var(--mario-red);
+    border-bottom: var(--pixel-border);
+    box-shadow: 0 4px 0 #000;
+    padding: 0.875rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .mario-header h1 {
+    color: var(--mario-yellow);
+    text-shadow: 2px 2px 0 #000;
+    font-size: 0.6rem;
+    margin: 0;
+    letter-spacing: 0.05em;
+  }
+
+  /* === CONTENT === */
+  .content {
+    max-width: 768px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem;
+  }
+
+  /* === CARD === */
+  .mario-card {
+    background-color: var(--mario-panel);
+    border: var(--pixel-border);
+    box-shadow: var(--pixel-shadow);
+    border-radius: 0;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .mario-card--yellow {
+    border-color: var(--mario-yellow);
+    box-shadow: 4px 4px 0 var(--mario-yellow-dark);
+  }
+
+  .mario-card--red {
+    border-color: var(--mario-red);
+    box-shadow: 4px 4px 0 var(--mario-red-dark);
+  }
+
+  .mario-card--blue {
+    border-color: var(--mario-blue);
+    box-shadow: 4px 4px 0 var(--mario-blue-dark);
+  }
+
+  .mario-card--green {
+    border-color: var(--mario-green);
+    box-shadow: 4px 4px 0 var(--mario-green-dark);
+  }
+
+  .mario-card--clickable {
+    cursor: pointer;
+    transition: transform 0.08s, box-shadow 0.08s;
+  }
+
+  .mario-card--clickable:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #000;
+  }
+
+  /* === BADGE === */
+  .mario-badge {
+    display: inline-block;
+    font-family: var(--font-heading);
+    font-size: 0.45rem;
+    padding: 0.2rem 0.5rem;
+    border: 2px solid #000;
+    box-shadow: 2px 2px 0 #000;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    vertical-align: middle;
+  }
+
+  .mario-badge--active {
+    background: var(--mario-green);
+    color: #fff;
+  }
+
+  .mario-badge--hold {
+    background: var(--mario-yellow);
+    color: #000;
+  }
+
+  .mario-badge--warning {
+    background: var(--mario-warning);
+    color: #fff;
+  }
+
+  .mario-badge--sell {
+    background: var(--mario-red);
+    color: #fff;
+  }
+
+  .mario-badge--sector {
+    background: var(--mario-blue);
+    color: #fff;
+  }
+
+  .mario-badge--ai {
+    background: var(--mario-panel-mid);
+    color: var(--mario-yellow);
+    border-color: var(--mario-yellow);
+  }
+
+  .mario-badge--unread {
+    background: var(--mario-red);
+    color: #fff;
+  }
+
+  .mario-badge--brown {
+    background: var(--mario-brown);
+    color: #fff;
+  }
+
+  /* === BUTTON === */
+  .mario-btn {
+    font-family: var(--font-heading);
+    font-size: 0.55rem;
+    padding: 0.625rem 1.25rem;
+    border: var(--pixel-border);
+    box-shadow: var(--pixel-shadow);
+    cursor: pointer;
+    display: inline-block;
+    transition: transform 0.05s, box-shadow 0.05s;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    line-height: 1.5;
+  }
+
+  .mario-btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: none;
+  }
+
+  .mario-btn:disabled,
+  .mario-btn[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .mario-btn--primary {
+    background: var(--mario-yellow);
+    color: #000;
+  }
+
+  .mario-btn--primary:hover {
+    background: var(--mario-yellow-dark);
+    color: #000;
+    text-decoration: none;
+  }
+
+  .mario-btn--secondary {
+    background: var(--mario-panel-mid);
+    color: var(--mario-white);
+  }
+
+  .mario-btn--secondary:hover {
+    background: #4a4a4a;
+    color: var(--mario-white);
+    text-decoration: none;
+  }
+
+  .mario-btn--danger {
+    background: var(--mario-red);
+    color: #fff;
+  }
+
+  .mario-btn--danger:hover {
+    background: var(--mario-red-dark);
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .mario-btn--sm {
+    font-size: 0.45rem;
+    padding: 0.35rem 0.7rem;
+  }
+
+  .mario-btn--full {
+    width: 100%;
+    text-align: center;
+    display: block;
+    box-sizing: border-box;
+  }
+
+  /* === INPUT === */
+  .mario-input {
+    width: 100%;
+    background: var(--mario-panel-mid);
+    border: var(--pixel-border);
+    box-shadow: inset 2px 2px 0 #000;
+    color: var(--mario-white);
+    padding: 0.625rem 0.75rem;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    border-radius: 0;
+    box-sizing: border-box;
+    margin-bottom: 0;
+    display: block;
+  }
+
+  .mario-input:focus {
+    outline: none;
+    border-color: var(--mario-yellow);
+    box-shadow: inset 2px 2px 0 #000, 0 0 0 2px var(--mario-yellow);
+  }
+
+  .mario-input::placeholder {
+    color: #888;
+  }
+
+  .mario-label {
+    font-family: var(--font-heading);
+    font-size: 0.45rem;
+    color: var(--mario-white-dim);
+    display: block;
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .mario-field {
+    margin-bottom: 1.25rem;
+  }
+
+  /* === BOTTOM NAV === */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--mario-panel);
+    border-top: var(--pixel-border);
+    box-shadow: 0 -4px 0 #000;
+    display: flex;
+    align-items: stretch;
+    z-index: 100;
+    height: 64px;
+  }
+
+  .bottom-nav__item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    color: var(--mario-white-dim);
+    text-decoration: none;
+    font-family: var(--font-heading);
+    font-size: 0.45rem;
+    border-right: 1px solid #000;
+    transition: background 0.1s;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .bottom-nav__item:last-child {
+    border-right: none;
+  }
+
+  .bottom-nav__item:hover,
+  .bottom-nav__item.router-link-exact-active {
+    background: var(--mario-red);
+    color: var(--mario-yellow);
+  }
+
+  .bottom-nav__icon {
+    font-size: 1.15rem;
+    line-height: 1;
+  }
+
+  .bottom-nav__badge {
+    position: absolute;
+    top: 6px;
+    right: calc(50% - 18px);
+    font-size: 0.35rem;
+    padding: 0.1rem 0.3rem;
+    min-width: 14px;
+    text-align: center;
+    line-height: 1.4;
+    border-width: 1px;
+    box-shadow: 1px 1px 0 #000;
+  }
+
+  /* === AUTH SHELL === */
+  .auth-shell {
+    min-height: 100vh;
+    background: var(--mario-black);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    padding-bottom: 2rem;
+  }
+
+  .auth-logo {
+    font-family: var(--font-heading);
+    color: var(--mario-yellow);
+    text-shadow: 3px 3px 0 #000;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .auth-logo h1 {
+    color: var(--mario-yellow);
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .auth-logo p {
+    font-family: var(--font-heading);
+    font-size: 0.4rem;
+    color: var(--mario-white-dim);
+    margin: 0;
+    letter-spacing: 0.1em;
+  }
+
+  .auth-card {
+    width: 100%;
+    max-width: 400px;
+    background: var(--mario-panel);
+    border: var(--pixel-border);
+    box-shadow: var(--pixel-shadow);
+    padding: 2rem;
+    box-sizing: border-box;
+  }
+
+  .auth-card h2 {
+    color: var(--mario-yellow);
+    margin-bottom: 1.5rem;
+    font-size: 0.65rem;
+  }
+
+  /* === TICKER CHIP === */
+  .ticker-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--mario-brown);
+    border: 2px solid #000;
+    box-shadow: 2px 2px 0 #000;
+    padding: 0.3rem 0.6rem;
+    margin: 0.2rem;
+    font-family: var(--font-heading);
+    font-size: 0.45rem;
+    color: var(--mario-white);
+    text-transform: uppercase;
+  }
+
+  /* === GRID === */
+  .mario-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+
+  /* === SECTION HEADING === */
+  .section-heading {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 3px solid var(--mario-yellow);
+    padding-bottom: 0.75rem;
+  }
+
+  .section-heading h2 {
+    margin-bottom: 0;
+    color: var(--mario-yellow);
+    text-shadow: 1px 1px 0 #000;
+  }
+
+  /* === NOTIFICATION ITEMS === */
+  .notif-item--unread .mario-card {
+    border-left-width: 6px;
+    border-left-color: var(--mario-blue);
+  }
+
+  .notif-item--read .mario-card {
+    opacity: 0.65;
+  }
+
+  /* === ERROR MESSAGE === */
+  .mario-error {
+    color: var(--mario-red);
+    font-family: var(--font-heading);
+    font-size: 0.45rem;
+    margin-top: 0.75rem;
+    padding: 0.5rem;
+    border: 2px solid var(--mario-red);
+    background: rgba(229, 37, 33, 0.1);
+  }
+
+  /* === SUCCESS MESSAGE === */
+  .mario-success {
+    color: var(--mario-green);
+    font-family: var(--font-heading);
+    font-size: 0.45rem;
+    margin-top: 0.75rem;
+    padding: 0.5rem;
+    border: 2px solid var(--mario-green);
+    background: rgba(67, 176, 71, 0.1);
+  }
+
+  /* === EMPTY STATE === */
+  .mario-empty {
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+
+  .mario-empty p {
+    font-family: var(--font-heading);
+    font-size: 0.55rem;
+    color: var(--mario-white-dim);
+    line-height: 2;
+  }
+
+  /* === DETAIL SECTION === */
+  .detail-section {
+    margin-bottom: 1.5rem;
+  }
+
+  .detail-section-label {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+  }
+
+  /* === SELL STATE OPACITY === */
+  .thesis-sell {
+    opacity: 0.5;
+  }
+
+  /* === CHECKBOX === */
+  .mario-checkbox-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .mario-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    border: var(--pixel-border);
+    background: var(--mario-panel-mid);
+    cursor: pointer;
+    position: relative;
+    margin-top: 2px;
+  }
+
+  .mario-checkbox:checked {
+    background: var(--mario-yellow);
+  }
+
+  .mario-checkbox:checked::after {
+    content: "✓";
+    position: absolute;
+    top: -2px;
+    left: 2px;
+    font-size: 14px;
+    color: #000;
+    font-weight: bold;
+  }
+
+  .mario-checkbox-label {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    color: var(--mario-white-dim);
+    line-height: 1.5;
   }
 }

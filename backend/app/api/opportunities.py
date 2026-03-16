@@ -5,9 +5,9 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
 from app.db.base import get_db
-from app.models.entities import Event, FollowedThesis, ReportAsset, User, UserBrokerSetting
+from app.models.entities import Event, FollowedThesis, ReportAsset, User
 from app.schemas.opportunity import AssetOut, FollowRequest, OpportunityDetail, OpportunityListItem
-from app.services.ai import filter_assets_for_broker, generate_report_for_event
+from app.services.ai import generate_report_for_event
 
 
 router = APIRouter(prefix="/opportunities", tags=["opportunities"])
@@ -43,10 +43,7 @@ def opportunity_detail(
         raise HTTPException(status_code=404, detail="Event not found")
 
     report = generate_report_for_event(db, event)
-    setting = db.query(UserBrokerSetting).filter(UserBrokerSetting.user_id == current_user.id).first()
-    broker_name = setting.broker_name if setting else "Default"
-    preferred_exchanges = setting.preferred_exchanges if setting else ""
-    assets = filter_assets_for_broker(db, report.id, broker_name, preferred_exchanges)
+    assets = db.query(ReportAsset).filter(ReportAsset.report_id == report.id).all()
     assets_warning = "No assets could be determined for this opportunity at the moment." if not assets else None
     return OpportunityDetail(
         event_id=event.id,
@@ -83,6 +80,14 @@ def follow_opportunity(
     if not event:
         raise HTTPException(status_code=404, detail="Event not found")
 
+    existing = (
+        db.query(FollowedThesis)
+        .filter(FollowedThesis.user_id == current_user.id, FollowedThesis.event_id == event_id)
+        .first()
+    )
+    if existing:
+        return {"thesis_id": existing.id, "status": "already_followed"}
+
     report = generate_report_for_event(db, event)
     assets = db.query(ReportAsset).filter(ReportAsset.report_id == report.id).all()
 
@@ -92,6 +97,7 @@ def follow_opportunity(
         report_id=report.id,
         securities_json=json.dumps([a.ticker for a in assets]),
         thesis_summary=report.market_impact,
+        report_headline=event.headline,
         time_horizon=payload.time_horizon,
         thesis_conditions=report.thesis_conditions,
     )

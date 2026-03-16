@@ -110,28 +110,18 @@ def fetch_news() -> list[dict]:
         ]
 
     results: list[dict] = []
-    # Fetch across multiple financial news categories to satisfy REQ-ING-002
-    queries = [
-        # Macroeconomics + central bank + rates
-        "central bank OR interest rates OR inflation OR monetary policy OR GDP",
-        # Corporate events
-        "merger OR acquisition OR earnings OR IPO OR bankruptcy",
-        # Geopolitics + commodities
-        "sanctions OR tariffs OR oil OR commodity OR geopolitics OR supply chain",
-        # Technology + regulation
-        "semiconductor OR AI regulation OR antitrust OR fintech",
-    ]
+    # Fetch from the three NewsAPI categories specified in REQ-ING-007
+    categories = ["business", "general", "technology"]
     with httpx.Client(timeout=15) as client:
-        for query in queries:
+        for category in categories:
             try:
                 resp = client.get(
-                    f"{settings.news_api_base_url}/everything",
+                    f"{settings.news_api_base_url}/top-headlines",
                     params={
                         "apiKey": settings.news_api_key,
-                        "q": query,
+                        "category": category,
                         "language": "en",
-                        "sortBy": "publishedAt",
-                        "pageSize": 10,
+                        "pageSize": 20,
                     },
                 )
                 resp.raise_for_status()
@@ -144,7 +134,7 @@ def fetch_news() -> list[dict]:
                         "description": a.get("description") or "",
                     })
             except Exception as exc:
-                logger.warning("NewsAPI query failed for %r: %s", query, exc)
+                logger.warning("NewsAPI category fetch failed for %r: %s", category, exc)
                 continue
 
     # Deduplicate by URL before returning

@@ -1,21 +1,16 @@
 <template>
   <div v-if="isAuthenticated" class="layout">
-    <header class="header">
-      <div class="flex items-center justify-between">
-        <h1 class="text-3xl font-semibold">AI Investment Opportunity Daily</h1>
-        <button @click="logout">Log out</button>
+    <header class="mario-header">
+      <div style="display:flex;align-items:center;gap:0.6rem;">
+        <ChickenLogo :size="36" />
+        <h1>CHICKEN TRADER</h1>
       </div>
-      <nav>
-        <RouterLink to="/">Opportunities</RouterLink>
-        <RouterLink to="/followed">Followed Ideas</RouterLink>
-        <RouterLink to="/notifications">Notifications</RouterLink>
-        <RouterLink to="/watchlist">Watchlist</RouterLink>
-        <RouterLink to="/broker">Broker</RouterLink>
-      </nav>
+      <AppButton variant="secondary" size="sm" @click="logout">EXIT</AppButton>
     </header>
     <main class="content">
       <RouterView />
     </main>
+    <BottomNav />
   </div>
   <RouterView v-else />
 </template>
@@ -24,6 +19,9 @@
 import { computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "./stores/auth";
+import AppButton from "./components/AppButton.vue";
+import BottomNav from "./components/BottomNav.vue";
+import ChickenLogo from "./components/ChickenLogo.vue";
 
 const authStore = useAuthStore();
 const router = useRouter();
