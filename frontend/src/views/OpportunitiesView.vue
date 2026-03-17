@@ -31,6 +31,7 @@
         <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1rem;">
           <AppBadge variant="sector">{{ op.sector }}</AppBadge>
           <AppBadge variant="ai">AI {{ op.confidence }}</AppBadge>
+          <AppBadge :variant="op.expected_market_impact === 'High' ? 'impact-high' : op.expected_market_impact === 'Low' ? 'impact-low' : 'impact-medium'">{{ op.expected_market_impact }} IMPACT</AppBadge>
         </div>
         <AppButton
           variant="primary"

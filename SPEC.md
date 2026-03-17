@@ -147,6 +147,8 @@ News APIs → Ingestion → Deduplication & Clustering → AI Relevance Filter
 
 **REQ-DET-004** Classification output shall be stored alongside the event record for audit and display purposes.
 
+**REQ-DET-005** Event records surfaced to the opportunity dashboard shall be sorted in descending order of expected market impact: High → Medium → Low.
+
 ---
 
 ### 4.3 AI-Generated Investment Reports
@@ -293,11 +295,14 @@ The frontend shall be a single-page application built with Vue.js and Vite. All 
 - Short summary (truncated to ~2 lines)
 - Affected sector(s)
 - AI confidence indicator
+- Expected market impact (High / Medium / Low)
 - A link or button to open the full report
 
 **REQ-UI-DASH-004** The dashboard shall support filtering by sector, time horizon, and confidence level.
 
-**REQ-UI-DASH-005** The dashboard shall display a prominent disclaimer that all content is AI-generated and informational only.
+**REQ-UI-DASH-005** Opportunities on the dashboard shall be ordered by expected market impact in descending order (High first, then Medium, then Low).
+
+**REQ-UI-DASH-006** The dashboard shall display a prominent disclaimer that all content is AI-generated and informational only.
 
 ---
 

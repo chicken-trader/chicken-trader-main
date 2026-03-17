@@ -232,6 +232,21 @@
     color: #fff;
   }
 
+  .mario-badge--impact-high {
+    background: var(--mario-red);
+    color: #fff;
+  }
+
+  .mario-badge--impact-medium {
+    background: var(--mario-yellow);
+    color: #000;
+  }
+
+  .mario-badge--impact-low {
+    background: var(--mario-green);
+    color: #fff;
+  }
+
   /* === BUTTON === */
   .mario-btn {
     font-family: var(--font-heading);

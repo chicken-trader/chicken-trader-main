@@ -1,6 +1,7 @@
 import json
 
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import case
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
@@ -19,7 +20,12 @@ def list_opportunities(
     db: Session = Depends(get_db),
 ) -> list[OpportunityListItem]:
     _ = current_user
-    events = db.query(Event).order_by(Event.relevance_score.desc(), Event.created_at.desc()).limit(25).all()
+    impact_order = case(
+        (Event.expected_market_impact == "High", 1),
+        (Event.expected_market_impact == "Medium", 2),
+        else_=3,
+    )
+    events = db.query(Event).order_by(impact_order, Event.relevance_score.desc(), Event.created_at.desc()).limit(25).all()
     return [
         OpportunityListItem(
             event_id=e.id,
@@ -27,6 +33,7 @@ def list_opportunities(
             summary=e.summary,
             sector=e.sector,
             confidence=e.confidence,
+            expected_market_impact=e.expected_market_impact,
         )
         for e in events
     ]

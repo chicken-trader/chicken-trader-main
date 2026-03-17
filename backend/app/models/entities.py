@@ -39,6 +39,7 @@ class Event(Base):
     market_interpretation: Mapped[str] = mapped_column(Text)
     sector: Mapped[str] = mapped_column(String(120), default="General")
     confidence: Mapped[str] = mapped_column(String(32), default="Medium")
+    expected_market_impact: Mapped[str] = mapped_column(String(32), default="Medium")
     relevance_score: Mapped[int] = mapped_column(Integer, default=50, index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 

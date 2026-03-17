@@ -16,6 +16,7 @@ class OpportunityListItem(BaseModel):
     summary: str
     sector: str
     confidence: str
+    expected_market_impact: str
 
 
 class OpportunityDetail(BaseModel):

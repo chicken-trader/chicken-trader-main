@@ -191,6 +191,7 @@ def ingest_news(db: Session) -> int:
                     market_interpretation=classification.get("market_interpretation", "Potentially market-moving event requiring monitoring."),
                     sector=classification.get("sector", "General"),
                     confidence=classification.get("confidence", "Medium"),
+                    expected_market_impact=market_impact,
                     relevance_score=_relevance_score(item["title"], item.get("description", "")),
                 )
             else:
@@ -201,6 +202,7 @@ def ingest_news(db: Session) -> int:
                     market_interpretation="Potentially market-moving event requiring monitoring.",
                     sector=_heuristic_sector(item["title"]),
                     confidence="Medium",
+                    expected_market_impact="Medium",
                     relevance_score=_relevance_score(item["title"], item.get("description", "")),
                 )
             db.add(event)
