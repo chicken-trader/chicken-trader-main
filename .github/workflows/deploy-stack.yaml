@@ -38,9 +38,9 @@ jobs:
             # Login to GitHub Container Registry
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             # Pull images
-            while IFS= read -r image; do
+            jq -r '.[].image' services.json | while IFS= read -r image; do
               docker pull --platform=linux/amd64 "ghcr.io/${{ github.repository_owner }}/${image}:latest"
-            done < <(jq -r '.[].image' services.json)
+            done
             # Deploy stack
             make deploy-prod STACK_NAME=${{ vars.STACK_NAME }} ENV_FILE=/home/${{ secrets.vm_user_name }}/infrastructure/.env
             # Cleanup
