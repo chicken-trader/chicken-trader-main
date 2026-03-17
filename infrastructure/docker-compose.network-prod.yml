@@ -1,0 +1,7 @@
+networks:
+  caddy-network:
+    external: true
+    
+  private:
+    driver: overlay
+    attachable: true

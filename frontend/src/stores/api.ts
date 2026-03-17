@@ -1,7 +1,7 @@
 function resolveApiBase(): string {
-  const configured = import.meta.env.VITE_API_BASE_URL as string | undefined;
-  if (configured && configured.trim()) {
-    return configured;
+  const configured = import.meta.env.VITE_API_BASE_URL?.trim();
+  if (configured) {
+    return configured.replace(/\/$/, "");
   }
 
   if (typeof window !== "undefined") {

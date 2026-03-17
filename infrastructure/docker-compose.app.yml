@@ -1,21 +1,23 @@
 services:
   frontend:
-    image: chicken-trader-frontend:latest
+    image: ghcr.io/chicken-trader/frontend:latest
     networks:
-      - public
+      - caddy-network
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
       update_config:
         order: start-first
+    labels:
+      caddy.reverse_proxy: "{{upstreams 80}}"
 
   api:
-    image: chicken-trader-backend:latest
+    image: ghcr.io/chicken-trader/backend:latest
     env_file:
       - ../.env
     networks:
-      - public
+      - caddy-network
       - private
     deploy:
       replicas: 1
@@ -23,9 +25,11 @@ services:
         condition: on-failure
       update_config:
         order: start-first
+    labels:
+      caddy.reverse_proxy: "{{upstreams 80}}"
 
   worker:
-    image: chicken-trader-backend:latest
+    image: ghcr.io/chicken-trader/backend:latest
     env_file:
       - ../.env
     command: ["celery", "-A", "app.workers.celery_app.celery", "worker", "--loglevel=INFO"]
@@ -37,7 +41,7 @@ services:
         condition: on-failure
 
   scheduler:
-    image: chicken-trader-backend:latest
+    image: ghcr.io/chicken-trader/backend:latest
     env_file:
       - ../.env
     command: ["celery", "-A", "app.workers.celery_app.celery", "beat", "--loglevel=INFO"]
@@ -71,12 +75,6 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
-
-networks:
-  public:
-    name: ${STACK_NAME:-chicken-trader}_public
-  private:
-    name: ${STACK_NAME:-chicken-trader}_private
 
 volumes:
   pg_data:
