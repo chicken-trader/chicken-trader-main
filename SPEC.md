@@ -28,6 +28,7 @@
    - 5.4 [Notifications Centre](#54-notifications-centre)
    - 5.5 [Watchlist](#55-watchlist)
    - 5.6 [Security Detail View](#56-security-detail-view)
+   - 5.7 [Landing Page](#57-landing-page)
 6. [System Architecture](#6-system-architecture)
    - 6.1 [Frontend](#61-frontend)
    - 6.2 [Backend](#62-backend)
@@ -99,7 +100,7 @@ News APIs → Ingestion → Deduplication & Clustering → AI Relevance Filter
 | Role | Description |
 |---|---|
 | Authenticated User | A registered user who can read reports, follow theses, and receive notifications. |
-| Guest | An unauthenticated visitor. Access is limited to a preview of the dashboard; following ideas requires authentication. |
+| Guest | An unauthenticated visitor. Access is limited to the public landing page; the application dashboard and all authenticated features require registration and login. |
 | System (AI Agent) | The automated backend process responsible for ingestion, report generation, monitoring, and reevaluation. |
 | Administrator | Internal operator with access to system configuration, ingestion pipeline controls, and AI prompt management. |
 
@@ -400,6 +401,29 @@ The frontend shall be a single-page application built with Vue.js and Vite. All 
 **REQ-UI-SDL-002** The detail view shall be dismissible without navigating away from the current page.
 
 **REQ-UI-SDL-003** If market data is unavailable for a given security, the detail view shall display a graceful fallback message rather than an error state.
+
+---
+
+### 5.7 Landing Page
+
+**REQ-UI-LP-001** Unauthenticated visitors shall be presented with a dedicated landing page instead of the application dashboard.
+
+**REQ-UI-LP-002** The landing page shall display a navigation bar with a "Log In" button in the top-right corner that navigates the user to the login view.
+
+**REQ-UI-LP-003** The landing page shall open with a full-width hero section containing:
+
+- The application name ("Chicken Trader")
+- The slogan: *"Don't be a chicken, break some eggs!"*
+
+**REQ-UI-LP-004** Below the hero, the landing page shall include a brief prose description of the application's purpose followed by a structured list of key features, covering at minimum:
+
+- AI-driven daily investment opportunity discovery
+- News ingestion and event clustering
+- Structured investment reports with suggested securities
+- Thesis following and lifecycle tracking (Active → Warning → Close Suggested)
+- Automated AI reevaluation and user notifications
+
+**REQ-UI-LP-005** The landing page shall conclude with a prominent "Register" call-to-action button that navigates the user to the registration view.
 
 ---
 

@@ -1,6 +1,6 @@
 <template>
   <nav class="bottom-nav">
-    <RouterLink class="bottom-nav__item" to="/" exact-active-class="router-link-exact-active">
+    <RouterLink class="bottom-nav__item" to="/market" exact-active-class="router-link-exact-active">
       <span class="bottom-nav__icon">🏪</span>
       <span>Market</span>
     </RouterLink>
