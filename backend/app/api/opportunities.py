@@ -22,8 +22,8 @@ def list_opportunities(
     from datetime import datetime, timedelta
 
     _ = current_user
-    # Calculate the start of yesteday
-    start_of_yesterday = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=1)
+    # Calculate the start of yesteday unless it's monday, then use the start of last saturday
+    minimum_created_at = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=(1 if datetime.utcnow().weekday() != 0 else 2))
     impact_order = case(
         (Event.expected_market_impact == "High", 1),
         (Event.expected_market_impact == "Medium", 2),
@@ -31,7 +31,7 @@ def list_opportunities(
     )
     events = (
         db.query(Event)
-        .filter(Event.created_at >= start_of_yesterday)
+        .filter(Event.created_at >= minimum_created_at)
         .order_by(impact_order, Event.relevance_score.desc(), Event.created_at.desc())
         .limit(25)
         .all()
