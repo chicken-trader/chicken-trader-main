@@ -10,7 +10,7 @@ function initUmami(): void {
     return;
   }
 
-  const scriptUrl = runtimeEnv.UMAMI_SCRIPT_URL?.trim();
+  const scriptUrl = `${runtimeEnv.UMAMI_HOST_URL?.trim()}/script.js`;
   const websiteId = runtimeEnv.UMAMI_WEBSITE_ID?.trim();
 
   if (!scriptUrl || !websiteId) {
