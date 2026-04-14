@@ -27,7 +27,7 @@ deploy-local:
 
 # deploy all services with databases and production urls and env
 deploy-prod:
-	docker stack deploy -c docker-compose.network-prod.yml -c docker-compose.app.yml -c docker-compose.urls-prod.yml ${STACK_NAME} --detach=false --resolve-image=always
+	docker stack deploy -c docker-compose.network-prod.yml -c docker-compose.app.yml -c docker-compose.umami.yml -c docker-compose.urls-prod.yml ${STACK_NAME} --detach=false --resolve-image=always
 
 # down all services
 down:
